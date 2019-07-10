@@ -1,5 +1,7 @@
 {
   "server": {
     "baseDir": ["./","./src", "./project-6/build/contracts"]
+    , "port": 8000
+    , "bind": "127.0.0.1"
   }
 }
