@@ -181,7 +181,7 @@ contract SupplyChain {
     string memory _productNotes) public
     verifyCaller(_originFarmerID)
   {
-    require(farmerRole.isFarmer(_originFarmerID), "You are not a Farmer");
+    //require(farmerRole.isFarmer(_originFarmerID), "You are not a Farmer");
 
     // Increment sku
     sku = sku + 1;
