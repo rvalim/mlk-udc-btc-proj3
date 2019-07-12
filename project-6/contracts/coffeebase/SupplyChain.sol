@@ -138,11 +138,6 @@ contract SupplyChain is Ownable, FarmerRole, DistributorRole, RetailerRole, Cons
     sku = 1;
   }
 
-  // Define a function 'kill' if required
-  function kill() public onlyOwner(){
-      selfdestruct(msg.sender);
-  }
-
   // Define a function 'harvestItem' that allows a farmer to mark an item 'Harvested'
   function harvestItem(uint _upc,
     address _originFarmerID,
