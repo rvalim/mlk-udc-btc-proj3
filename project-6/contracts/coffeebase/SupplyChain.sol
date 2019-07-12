@@ -305,8 +305,11 @@ contract SupplyChain is Ownable, FarmerRole, DistributorRole, RetailerRole, Cons
     consumerID = items[_sku].consumerID;
   }
 
-  function getSKUs(uint udc) public view returns(uint[] memory) {
-    return upcToItems[udc];
+  function getSKUs(uint udc) public view returns(
+    uint[] memory skus
+  )
+  {
+    skus = upcToItems[udc];
   }
 
   //Responsable to pay and give back refund

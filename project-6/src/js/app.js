@@ -170,6 +170,8 @@ App = {
 
         try {
             const instance = await App.contracts.SupplyChain.deployed()
+
+            App.upc = $("#upc").val();
             const result = await instance.harvestItem(
                 App.upc,
                 App.metamaskAccountID,
@@ -183,13 +185,10 @@ App = {
             $("#ftc-item").text(result);
             console.log('harvestItem', result);
 
-            instance.getSKUs(
-                App.upc
-            )
-            .then(skus => console.log(skus))
+            instance.getSKUs.call(App.upc)
+            .then(result => console.log(result))
             .catch(err => console.log('ricardo',err))
 
-            console.log('ricardo', skus);
         }
         catch (err) {
             console.log(err.message);
@@ -314,7 +313,7 @@ fetchItemBufferOne: function () {
 fetchItemBufferTwo: function () {
     ///    event.preventDefault();
     ///    var processId = parseInt($(event.target).data('id'));
-
+console.log('vali', App.sku)
     App.contracts.SupplyChain.deployed().then(function (instance) {
         return instance.fetchItemBufferTwo.call(App.sku);
     }).then(function (result) {
