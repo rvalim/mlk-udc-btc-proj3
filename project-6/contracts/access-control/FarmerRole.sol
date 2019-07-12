@@ -1,7 +1,6 @@
 pragma solidity >=0.4.24;
 
-// Import the library 'Roles'
-import "./Roles.sol";
+import "../../node_modules/openzeppelin-solidity/contracts/access/Roles.sol";
 
 // Define a contract 'FarmerRole' to manage this role - add, remove, check
 contract FarmerRole {
@@ -21,13 +20,8 @@ contract FarmerRole {
 
   // Define a modifier that checks to see if msg.sender has the appropriate role
   modifier onlyFarmer() {
-    require(isFarmer(msg.sender), "");
+    require(farmers.has(msg.sender), "");
     _;
-  }
-
-  // Define a function 'isFarmer' to check this role
-  function isFarmer(address account) public view returns (bool) {
-    return farmers.has(account);
   }
 
   // Define a function 'addFarmer' that adds this role
@@ -37,18 +31,13 @@ contract FarmerRole {
 
   // Define a function 'renounceFarmer' to renounce this role
   function renounceFarmer() public {
-    _removeFarmer(msg.sender);
+    farmers.remove(msg.sender);
+    emit FarmerRemoved(msg.sender);
   }
 
   // Define an internal function '_addFarmer' to add this role, called by 'addFarmer'
   function _addFarmer(address account) internal {
     farmers.add(account);
     emit FarmerAdded(account);
-  }
-
-  // Define an internal function '_removeFarmer' to remove this role, called by 'removeFarmer'
-  function _removeFarmer(address account) internal {
-    farmers.remove(account);
-    emit FarmerRemoved(account);
   }
 }

@@ -168,6 +168,13 @@ App = {
         var processId = parseInt($(event.target).data('id'));
 
         App.contracts.SupplyChain.deployed().then(function(instance) {
+            console.log('ricardo', {a: App.upc,
+                b: App.metamaskAccountID,
+                c: App.originFarmName,
+                d: App.originFarmInformation,
+                e: App.originFarmLatitude,
+                f: App.originFarmLongitude,
+                g: App.productNotes})
             return instance.harvestItem(
                 App.upc,
                 App.metamaskAccountID,
@@ -178,9 +185,11 @@ App = {
                 App.productNotes
             );
         }).then(function(result) {
+            console.log('ricardo 1 ')
             $("#ftc-item").text(result);
             console.log('harvestItem',result);
         }).catch(function(err) {
+            console.log('ricardo 2 ')
             console.log(err.message);
         });
     },
