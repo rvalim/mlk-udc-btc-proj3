@@ -6,12 +6,12 @@ import "../../node_modules/openzeppelin-solidity/contracts/access/Roles.sol";
 contract FarmerRole {
   using Roles for Roles.Role;
 
+  // Define a struct 'farmers' by inheriting from 'Roles' library, struct Role
+  Roles.Role private farmers;
+
   // Define 2 events, one for Adding, and other for Removing
   event FarmerAdded(address indexed account);
   event FarmerRemoved(address indexed account);
-
-  // Define a struct 'farmers' by inheriting from 'Roles' library, struct Role
-  Roles.Role private farmers;
 
   // In the constructor make the address that deploys this contract the 1st farmer
   constructor() public {

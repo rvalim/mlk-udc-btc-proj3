@@ -1,13 +1,12 @@
 pragma solidity >=0.4.24;
 
-// Import the library 'Roles'
-
 import "../../node_modules/openzeppelin-solidity/contracts/access/Roles.sol";
 
 // Define a contract 'ConsumerRole' to manage this role - add, remove, check
 contract ConsumerRole {
   using Roles for Roles.Role;
 
+  // Define a struct 'distributors' by inheriting from 'Roles' library, struct Role
   Roles.Role private consumers;
 
   // Define 2 events, one for Adding, and other for Removing
