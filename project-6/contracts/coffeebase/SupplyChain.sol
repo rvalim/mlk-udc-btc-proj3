@@ -12,8 +12,6 @@ import "../access-control/ConsumerRole.sol";
 
 // Define a contract 'Supplychain'
 contract SupplyChain is Ownable, FarmerRole, DistributorRole, RetailerRole, ConsumerRole {
-  // Define a variable called 'sku' for Stock Keeping Unit (SKU)
-  uint sku;
 
   struct Farm {
     address      originFarmerID; // Farmer Address
@@ -21,6 +19,7 @@ contract SupplyChain is Ownable, FarmerRole, DistributorRole, RetailerRole, Cons
     string       originFarmInformation;  // Farmer Information
     string       originFarmLatitude; // Farm Latitude
     string       originFarmLongitude;  // Farm Longitude
+    uint[]       harvests;
   }
 
   enum HarvestState { Planted, Harvested, Processed, Packed }
@@ -46,13 +45,21 @@ contract SupplyChain is Ownable, FarmerRole, DistributorRole, RetailerRole, Cons
     address         consumerID; // Metamask-Ethereum address of the Consumer
   }
 
-  uint itemHSeed = 0;
-  uint itemBSeed = 0;
+ // Define a variable called 'sku' for Stock Keeping Unit (SKU)
+  uint sku;
+  uint itemHSeed;
+  uint itemBSeed;
   mapping (address => Farm)   farms;
   mapping (uint => ItemHarvest) itemHarvests;
   mapping (uint => ItemBag)     itemBags;
 
-  function addFarmer(
+  constructor() public {
+      itemBSeed = 0;
+      itemHSeed = 0;
+      sku = 0;
+  }
+
+  function addFarmer1(
     address _originFarmerID,
     string memory _originFarmName,
     string memory _originFarmInformation,
@@ -70,7 +77,7 @@ contract SupplyChain is Ownable, FarmerRole, DistributorRole, RetailerRole, Cons
 
     farms[_originFarmerID] = farm;
 
-    super._addFarmer(_originFarmerID);
+    super.addFarmer(_originFarmerID);
   }
 
   function toPlantItem(uint _upc,
@@ -87,6 +94,8 @@ contract SupplyChain is Ownable, FarmerRole, DistributorRole, RetailerRole, Cons
     item.state = HarvestState.Planted;  // Product State as represented in the enum above
 
     itemHarvests[itemHSeed] = item;
+
+    farms[msg.sender].harvests.push(itemHSeed);
 
     emit Planted(itemHSeed);
   }
@@ -298,12 +307,14 @@ contract SupplyChain is Ownable, FarmerRole, DistributorRole, RetailerRole, Cons
     string memory originFarmName,
     string memory originFarmInformation,
     string memory originFarmLatitude,
-    string memory originFarmLongitude
+    string memory originFarmLongitude,
+    uint[] memory harvests
   ) {
     originFarmName = farms[farmAddress].originFarmName;
     originFarmInformation = farms[farmAddress].originFarmInformation;
     originFarmLatitude = farms[farmAddress].originFarmLatitude;
     originFarmLongitude = farms[farmAddress].originFarmLongitude;
+    harvests = farms[farmAddress].harvests;
   }
 
   function fetchHarvest(uint harvestId) public view returns(

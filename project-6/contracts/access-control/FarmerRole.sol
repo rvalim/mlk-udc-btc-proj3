@@ -30,10 +30,10 @@ contract FarmerRole {
     _;
   }
 
-  // Define a function 'addFarmer' that adds this role
-  // function addFarmer(address account) public onlyFarmer {
-  //   _addFarmer(account);
-  // }
+  //Define a function 'addFarmer' that adds this role
+  function addFarmer(address account) public onlyFarmer {
+    _addFarmer(account);
+  }
 
   // Define a function 'renounceFarmer' to renounce this role
   function renounceFarmer() public {
@@ -43,7 +43,6 @@ contract FarmerRole {
 
   // Define an internal function '_addFarmer' to add this role, called by 'addFarmer'
   function _addFarmer(address account) internal
-  onlyFarmer
   {
     farmers.add(account);
     emit FarmerAdded(account);

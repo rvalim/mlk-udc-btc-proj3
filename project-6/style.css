@@ -5,12 +5,12 @@ body {
   color: #212121;
 }
 .container {
-  width: 80%;
+  width: 100%;
   margin: 0 auto;
 }
 
 
-.bold { 
+.bold {
   font-weight: bolder;
 }
 
@@ -33,7 +33,7 @@ button {
     cursor: pointer;
 }
 
-.sell { 
+.sell {
   background-color: white;
   color: #D1C4E9;
 }
@@ -48,7 +48,7 @@ button {
 .form-group {
   background-color:#0097A7;
   color:black;
-  width:50%;
+  width:90%;
   padding:30px;
   border-radius: 4px;
   background-color: #f8f8f8;
