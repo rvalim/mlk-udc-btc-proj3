@@ -24,6 +24,12 @@ contract DistributorRole {
     _;
   }
 
+  // Define a modifier that checks to see if address has the appropriate role
+  modifier isDistributor(address _address) {
+    require(distributors.has(_address), "");
+    _;
+  }
+
   // Define a function 'addDistributor' that adds this role
   function addDistributor(address account) public onlyDistributor {
     _addDistributor(account);
