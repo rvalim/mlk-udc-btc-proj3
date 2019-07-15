@@ -53,13 +53,30 @@ contract SupplyChain is Ownable, FarmerRole, DistributorRole, RetailerRole, Cons
   mapping (uint => ItemHarvest) itemHarvests;
   mapping (uint => ItemBag)     itemBags;
 
+  event Planted(uint id);
+  event Harvested(uint id);
+  event Processed(uint id);
+  event Packed(uint id);
+  event ForSale(uint id);
+  event Sold(uint id);
+  event Shipped(uint id);
+  event Received(uint id);
+
   constructor() public {
       itemBSeed = 0;
       itemHSeed = 0;
       sku = 0;
+
+      Farm memory farm;
+      farm.originFarmerID = msg.sender;
+      farm.originFarmName = 'Ricardo Valim';
+      farm.originFarmInformation = 'The base Farm';
+      farm.originFarmLatitude = '-23.628324';
+      farm.originFarmLongitude = '-46.575751';
+      farms[msg.sender] = farm;
   }
 
-  function addFarmer1(
+  function registerFarm(
     address _originFarmerID,
     string memory _originFarmName,
     string memory _originFarmInformation,
@@ -84,6 +101,7 @@ contract SupplyChain is Ownable, FarmerRole, DistributorRole, RetailerRole, Cons
     string memory _productNotes)
     public
     onlyFarmer()
+    verifyCaller(farms[msg.sender].originFarmerID) // To validate user registered as farmer
   {
     itemHSeed = itemHSeed + 1;
     ItemHarvest memory item;
@@ -100,39 +118,39 @@ contract SupplyChain is Ownable, FarmerRole, DistributorRole, RetailerRole, Cons
     emit Planted(itemHSeed);
   }
 
-  function harvestItem(uint plantationId)
+  function harvestItem(uint harvestId)
     public
-    planted(plantationId)
+    planted(harvestId)
     onlyFarmer()
-    verifyCaller(msg.sender)
+    verifyCaller(itemHarvests[harvestId].farm.originFarmerID)
   {
-    itemHarvests[plantationId].state = HarvestState.Harvested;
+    itemHarvests[harvestId].state = HarvestState.Harvested;
 
-    emit Harvested(plantationId);
+    emit Harvested(harvestId);
   }
 
-  function processItem(uint plantationId) public
-    harvested(plantationId)
-    verifyCaller(itemHarvests[plantationId].farm.originFarmerID)
+  function processItem(uint harvestId) public
+    harvested(harvestId)
+    verifyCaller(itemHarvests[harvestId].farm.originFarmerID)
   {
-    itemHarvests[plantationId].state = HarvestState.Processed;
+    itemHarvests[harvestId].state = HarvestState.Processed;
 
-    emit Processed(plantationId);
+    emit Processed(harvestId);
   }
 
-  function packItem(uint plantationId) public
-    processed(plantationId)
-    verifyCaller(itemHarvests[plantationId].farm.originFarmerID)
+  function packItem(uint harvestId) public
+    processed(harvestId)
+    verifyCaller(itemHarvests[harvestId].farm.originFarmerID)
   {
-    itemHarvests[plantationId].state = HarvestState.Packed;
+    itemHarvests[harvestId].state = HarvestState.Packed;
 
-    emit Packed(plantationId);
+    emit Packed(harvestId);
   }
 
-  function putForSaleByFarmer(uint plantationId, uint price) public
+  function putForSaleByFarmer(uint harvestId, uint price) public
     onlyFarmer()
-    packed(plantationId)
-    verifyCaller(itemHarvests[plantationId].farm.originFarmerID)
+    packed(harvestId)
+    verifyCaller(itemHarvests[harvestId].farm.originFarmerID)
   {
     sku = sku + 1;
 
@@ -140,7 +158,7 @@ contract SupplyChain is Ownable, FarmerRole, DistributorRole, RetailerRole, Cons
 
     item.sku = sku;
     item.ownerID = msg.sender;
-    item.harvest = itemHarvests[plantationId];
+    item.harvest = itemHarvests[harvestId];
     item.productID = sku * 1000000 + item.harvest.upc;
     item.productPrice = price;
     item.state = SellState.ForSale;
@@ -188,7 +206,7 @@ contract SupplyChain is Ownable, FarmerRole, DistributorRole, RetailerRole, Cons
     _buyItem(_sku);
   }
 
-  function buyFromRatailer(uint _sku) public payable
+  function buyFromRetailer(uint _sku) public payable
     onlyConsumer()
     isRetailer(itemBags[_sku].ownerID)
   {
@@ -225,15 +243,6 @@ contract SupplyChain is Ownable, FarmerRole, DistributorRole, RetailerRole, Cons
 
     emit Received(_sku);
   }
-
-  event Planted(uint upc);
-  event Harvested(uint sku);
-  event Processed(uint sku);
-  event Packed(uint sku);
-  event ForSale(uint sku);
-  event Sold(uint sku);
-  event Shipped(uint sku);
-  event Received(uint sku);
 
   // Define a modifer that verifies the Caller
   modifier verifyCaller(address _address) {
