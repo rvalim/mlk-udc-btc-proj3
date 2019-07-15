@@ -1,110 +1,74 @@
-# Supply chain & data auditing
-
-This repository containts an Ethereum DApp that demonstrates a Supply Chain flow between a Seller and Buyer. The user story is similar to any commonly used supply chain process. A Seller can add items to the inventory system stored in the blockchain. A Buyer can purchase such items from the inventory system. Additionally a Seller can mark an item as Shipped, and similarly a Buyer can mark an item as Received.
-
-The DApp User Interface when running should look like...
-
-![truffle test](images/ftc_product_overview.png)
-
-![truffle test](images/ftc_farm_details.png)
-
-![truffle test](images/ftc_product_details.png)
-
-![truffle test](images/ftc_transaction_history.png)
-
+# Coffee Suply Chain
 
 ## Getting Started
+The proposal of this document is to guide you over this project.
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
+### Technical References
 
-### Prerequisites
+* [OpenZeppelin](https://www.npmjs.com/package/openzeppelin-solidity): v2.3.0 - A library for secure smart contract development
+* [LiteServer](https://www.npmjs.com/package/lite-server): v2.4.0 - _Development only_ node server that serves a web app
+* [Truffle](https://www.npmjs.com/package/truffle): v5.0.22 - Development environment, testing framework and asset pipeline for Ethereum
+* [Ganacha CLI](https://www.npmjs.com/package/ganache-cli): v6.4.4 - Uses ethereumjs to simulate full client behavior and make developing Ethereum applications faster, easier, and safer
+* [Metamask](https://metamask.io/): v6.7.2 - It allows you to run Ethereum dApps right in your browser without running a full Ethereum node
+* [Solidity](https://solidity.readthedocs.io):  >=0.4.24 - Ethereum language for writing Smart Contracts
+* [Node](https://nodejs.org): v12.6.0 - JavaScript runtime
+* [Web3.js](https://web3js.readthedocs.io): v1.0.0-beta.37 - A collection of libraries which allow you to interact with a local or remote Ethereum node, using an HTTP, WebSocket or IPC connection
 
-Please make sure you've already installed ganache-cli, Truffle and enabled MetaMask extension in your browser.
-
-```
-Give examples (to be clarified)
-```
-
-### Installing
-
-A step by step series of examples that tell you have to get a development env running
-
-Clone this repository:
+### Folder Structure
 
 ```
-git clone https://github.com/udacity/nd1309/tree/master/course-5/project-6
+..
+├── ...
+├── project-6
+|	├── contracts
+|	|	|── access-control				# The RBAC is implemented here
+|	|	|── coffeebase					# Where the contract code for our SupplyChain is located
+|	|	└── ...
+|	├── ...
+|	├── src
+|	|	|── js
+|	|	|   |── app.js					# Where the front-end calls the Contract methods
+|	|	|   └── truffle-contract.js
+|	|── test
+|	|   └── TestSupplychain.js			# Where the truffle tests are implemented
+|	|── bs-config.json					# Configuration for Lite-Server
+|	|── index.html						# The main page, where the front-end is located
+|	|── ...
+|	|── truffle-config.js				# Configuration for truffle commands, the address of ganache server goes here
+|	|── ...
+|── ...
+|── 0_ganache-cli.txt					# Address created when running commented bellow
+|── 1_start_ganache-cli.sh				# Command to start Ganache with a predefined Wallet
+└── ...
 ```
 
-Change directory to ```project-6``` folder and install all requisite npm packages (as listed in ```package.json```):
+### Running Solution
 
-```
-cd project-6
-npm install
-```
+You will nedd three terminals:
 
-Launch Ganache:
-
-```
-ganache-cli -m "spirit supply whale amount human item harsh scare congress discover talent hamster"
-```
-
-Your terminal should look something like this:
-
-![truffle test](images/ganache-cli.png)
-
-In a separate terminal window, Compile smart contracts:
-
-```
-truffle compile
-```
-
-Your terminal should look something like this:
-
-![truffle test](images/truffle_compile.png)
-
-This will create the smart contract artifacts in folder ```build\contracts```.
-
-Migrate smart contracts to the locally running blockchain, ganache-cli:
-
-```
-truffle migrate
-```
-
-Your terminal should look something like this:
-
-![truffle test](images/truffle_migrate.png)
-
-Test smart contracts:
-
-```
-truffle test
-```
-
-All 10 tests should pass.
-
-![truffle test](images/truffle_test.png)
-
-In a separate terminal window, launch the DApp:
-
-```
-npm run dev
-```
-
-## Built With
-
-* [Ethereum](https://www.ethereum.org/) - Ethereum is a decentralized platform that runs smart contracts
-* [IPFS](https://ipfs.io/) - IPFS is the Distributed Web | A peer-to-peer hypermedia protocol
-to make the web faster, safer, and more open.
-* [Truffle Framework](http://truffleframework.com/) - Truffle is the most popular development framework for Ethereum with a mission to make your life a whole lot easier.
+ - Terminal 1:
+	 - `npm run dev`: to start the litea-server
+ - Terminal 2:
+	 - `ganache-cli -m "spirit supply whale amount human item harsh scare congress discover talent hamster"`: To start Ganache with specific Wallets
+ - Terminal 3
+	 - `truffle compile`: To compile the contracts
+	 - `truffle migrate`: To apply the contrats to the network
 
 
-## Authors
+### Running Tests
 
-See also the list of [contributors](https://github.com/your/project/contributors.md) who participated in this project.
+## Diagrams
 
-## Acknowledgments
+### Activity
+![Activity Diagram](./images/uml_activity.png)
 
-* Solidity
-* Ganache-cli
-* Truffle
-* IPFS
+### Sequence
+![Sequence Diagram](./images/uml_sequence.png)
+
+### State
+![State Diagram](./images/uml_state.png)
+
+### Classes
+![Class Diagram](./images/uml_class.png)
+
+
