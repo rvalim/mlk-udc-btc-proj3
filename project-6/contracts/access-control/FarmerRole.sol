@@ -24,7 +24,13 @@ contract FarmerRole {
     _;
   }
 
-  // Define a function 'addFarmer' that adds this role
+  // Define a modifier that checks to see if address has the appropriate role
+  modifier isFarmer(address _address) {
+    require(farmers.has(_address), "");
+    _;
+  }
+
+  //Define a function 'addFarmer' that adds this role
   function addFarmer(address account) public onlyFarmer {
     _addFarmer(account);
   }
@@ -36,7 +42,8 @@ contract FarmerRole {
   }
 
   // Define an internal function '_addFarmer' to add this role, called by 'addFarmer'
-  function _addFarmer(address account) internal {
+  function _addFarmer(address account) internal
+  {
     farmers.add(account);
     emit FarmerAdded(account);
   }

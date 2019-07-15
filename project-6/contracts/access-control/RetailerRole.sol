@@ -24,6 +24,12 @@ contract RetailerRole {
     _;
   }
 
+  // Define a modifier that checks to see if address has the appropriate role
+  modifier isRetailer(address _address) {
+    require(retailers.has(_address), "");
+    _;
+  }
+
   // Define a function 'addRetailer' that adds this role
   function addRetailer(address account) public onlyRetailer {
     _addRetailer(account);

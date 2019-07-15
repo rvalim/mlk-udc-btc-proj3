@@ -24,6 +24,12 @@ contract ConsumerRole {
     _;
   }
 
+  // Define a modifier that checks to see if address has the appropriate role
+  modifier isConsumer(address _address) {
+    require(consumers.has(_address), "");
+    _;
+  }
+
   // Define a function 'addConsumer' that adds this role
   function addConsumer(address account) public onlyConsumer {
     _addConsumer(account);
