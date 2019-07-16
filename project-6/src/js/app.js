@@ -126,8 +126,6 @@ App = {
         switch (processId) {
             case 11:
                 return await App.registerFarm(event);
-            case 12:
-                return await App.getFarm(event);
             case 13:
                 return await App.registerUser(event, processFrom);
             case 14:
@@ -151,7 +149,7 @@ App = {
             case 9:
                 return await App.fetchBags(event);
             case 10:
-                return await App.fetchHarvest(event);
+                return await App.fetchFarm(event);
         }
     },
     toPlantItem: async function () {
@@ -196,7 +194,7 @@ App = {
             console.log(err.message);
         }
     },
-    getFarm: async function (event) {
+    fetchFarm: async function (event) {
         event.preventDefault();
 
         try {
@@ -208,7 +206,7 @@ App = {
             )
 
             $("#ftc-item").text(result);
-            console.log('getFarm', result);
+            console.log('fetchFarm', result);
 
         }
         catch (err) {
@@ -392,18 +390,6 @@ App = {
         }).then(function (result) {
             $("#ftc-item").text(result);
             console.log('receiveItem', result);
-        }).catch(function (err) {
-            console.log(err.message);
-        });
-    },
-    fetchHarvest: function () {
-        event.preventDefault();
-        const sku = $("#fHarvestId").val();
-        App.contracts.SupplyChain.deployed().then(function (instance) {
-            return instance.fetchHarvest(sku);
-        }).then(function (result) {
-            $("#ftc-item").text(result);
-            console.log('fetchHarvest', result);
         }).catch(function (err) {
             console.log(err.message);
         });

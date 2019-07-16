@@ -20,13 +20,13 @@ contract FarmerRole {
 
   // Define a modifier that checks to see if msg.sender has the appropriate role
   modifier onlyFarmer() {
-    require(farmers.has(msg.sender), "");
+    require(farmers.has(msg.sender), "Sender has no Farmer's Role");
     _;
   }
 
   // Define a modifier that checks to see if address has the appropriate role
   modifier isFarmer(address _address) {
-    require(farmers.has(_address), "");
+    require(farmers.has(_address), "Address has no Farmer's Role");
     _;
   }
 

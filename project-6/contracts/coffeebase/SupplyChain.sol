@@ -53,6 +53,7 @@ contract SupplyChain is Ownable, FarmerRole, DistributorRole, RetailerRole, Cons
   mapping (uint => ItemHarvest) itemHarvests;
   mapping (uint => ItemBag)     itemBags;
 
+
   event Planted(uint id);
   event Harvested(uint id);
   event Processed(uint id);

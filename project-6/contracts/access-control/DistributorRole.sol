@@ -20,13 +20,13 @@ contract DistributorRole {
 
   // Define a modifier that checks to see if msg.sender has the appropriate role
   modifier onlyDistributor() {
-    require(distributors.has(msg.sender), "");
+    require(distributors.has(msg.sender), "Sender has no Distributor's Role");
     _;
   }
 
   // Define a modifier that checks to see if address has the appropriate role
   modifier isDistributor(address _address) {
-    require(distributors.has(_address), "");
+    require(distributors.has(_address), "Address has no Distributor's Role");
     _;
   }
 

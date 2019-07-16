@@ -20,13 +20,13 @@ contract RetailerRole {
 
   // Define a modifier that checks to see if msg.sender has the appropriate role
   modifier onlyRetailer() {
-    require(retailers.has(msg.sender), "");
+    require(retailers.has(msg.sender), "Address has no Retailer's Role");
     _;
   }
 
   // Define a modifier that checks to see if address has the appropriate role
   modifier isRetailer(address _address) {
-    require(retailers.has(_address), "");
+    require(retailers.has(_address), "Address has no Retailer's Role");
     _;
   }
 
