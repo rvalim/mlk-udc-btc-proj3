@@ -58,6 +58,12 @@ You will nedd three terminals:
 
 ### Running Tests
 
+You will need two terminals:
+
+- Terminal 1: Run the ganache-cli command showed above
+- Terminal 2:
+-  `truffle test`: To execute the tests
+
 ## Screens
 
 ### Menu
@@ -67,23 +73,23 @@ You will nedd three terminals:
 -  Negotiation: Wher all the transactions are made, puting for Sale, Buying, Shipping and Receiving
 -  Fetch Item: Get product's informations from the database
 
-![Menu](./images/print/menu.png)
+![Menu](./images/print/menu.PNG)
 
 ### Roles
 
 This part of the screen is made for register new Companies. The *Get By Address* only made a *console.log* information, so you need to look your console to see it.
 
-![Adding/Fetching Company](./images/print/company.png)
+![Adding/Fetching Company](./images/print/company.PNG)
 
 In this screen you can add new Distributors, Retailers and Consumers too, just put the wallet you want, as shown bellow:
 
-![Others](./images/print/others.png)
+![Others](./images/print/others.PNG)
 
 ### Harvest
 
 Where the farmer can plant new Products and goes until the Packing phase.
 
- ![Product](./images/print/product add.png)
+ ![Product](./images/print/product add.PNG)
 
 -  Plant: Register that a item has been planted
 -  Harverst: To harvest the plantation
@@ -92,13 +98,13 @@ Where the farmer can plant new Products and goes until the Packing phase.
 
 **OBS**: The IDs for *SKU* and *Harvest ID*(this is used only by the farmer) is register on the Transaction  part of the screen, as shown bellow, the **ID**, can be the SKU or the Harvest ID, depending on the phase.
 
- ![Transaction](./images/print/tx history.png)
+ ![Transaction](./images/print/tx history.PNG)
 
 ### Negotiation
 
 Used for Selling, Buying, Sending and Receiving methods, dispared by ones involved in the process.
 
- ![Transaction](./images/print/workflow.png)
+ ![Transaction](./images/print/workflow.PNG)
 
 **OBS**: Each Role has an specific line with your actions, the screen is using the contract owner always, and this one has all the Roles, so you can navigate for all the process. But if you try to jumb states you will have an error, like receiving something you do not buy, or buying from the costumer something that is for sale by the farmer.  So the selling and buying must follow: from Farmer to Distributor, from Distributor to Retailer, from Retailer to Costumer, and the Costumer can sell nothing.
 
@@ -106,7 +112,7 @@ Used for Selling, Buying, Sending and Receiving methods, dispared by ones involv
 
 The last screen is used to retrive information of the plantation or the products for sale.
 
- ![Plantation/Product for sale](./images/print/fetch.png)
+ ![Plantation/Product for sale](./images/print/fetch.PNG)
 
 **OBS**: The information will be printed on the console.
 
