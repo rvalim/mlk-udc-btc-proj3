@@ -77,7 +77,7 @@ contract('SupplyChain', function(accounts) {
         buyItem: async function() {
             result = await this.owner.putForSale();
             let sku = this.getId(result);
-console.log('rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr', sku)
+
             return instance.buyFromFarmer(sku, formatPayable(this.me, 1));
         },
         receiveItem: async function() {
