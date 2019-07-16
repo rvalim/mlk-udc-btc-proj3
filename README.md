@@ -120,16 +120,16 @@ The last screen is used to retrive information of the plantation or the products
 
 ### Activity
 
-![Activity Diagram](./images/uml_activity.PNG)
+![Activity Diagram](./images/uml_activity.png)
 
 ### Sequence
 
-![Sequence Diagram](./images/uml_sequence.PNG)
+![Sequence Diagram](./images/uml_sequence.png)
 
 ### State
 
-![State Diagram](./images/uml_state.PNG)
+![State Diagram](./images/uml_state.png)
 
 ### Classes
 
-![Class Diagram](./images/uml_class.PNG)
+![Class Diagram](./images/uml_class.png)
