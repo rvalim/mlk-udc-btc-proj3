@@ -92,7 +92,7 @@ Where the farmer can plant new Products and goes until the Packing phase.
 
 **OBS**: The IDs for *SKU* and *Harvest ID*(this is used only by the farmer) is register on the Transaction  part of the screen, as shown bellow, the **ID**, can be the SKU or the Harvest ID, depending on the phase.
 
- ![Transaction](./images/print/tx history.png)
+ ![Transaction](./images/print/tx history.PNG)
 
 ### Negotiation
 
