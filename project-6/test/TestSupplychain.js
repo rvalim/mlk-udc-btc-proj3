@@ -2,156 +2,31 @@
 // Declare a variable and assign the compiled smart contract artifact
 var SupplyChain = artifacts.require('SupplyChain');
 
+
 contract('SupplyChain', function(accounts) {
     const Test = require("./testValues")(accounts, web3);
+    const helper = require("./testHelper");
     let instance;
 
     beforeEach(async ()=> {
         instance = await SupplyChain.new({from: Test.addressContractOwner});
-        await instance.addFarmer(Test.addressFarmer);
+
+        helper.instance = instance;
+        helper.farmer.me = Test.addressFarmer;
+        helper.distributor.me = Test.addressDistributor;
+        helper.retailer.me = Test.addressRetailer;
+        helper.consumer.me = Test.addressConsumer;
+
+        await instance.registerFarm(Test.addressFarmer,
+            Test.farmName,
+            Test.farmInfo,
+            Test.farmLat,
+            Test.farmLog);
         await instance.addDistributor(Test.addressDistributor);
         await instance.addRetailer(Test.addressRetailer);
         await instance.addConsumer(Test.addressConsumer);
     });
 
-    toWei = (value) => {
-        return web3.utils.toWei(value.toString(), 'ether');
-    }
-
-    getId = (result) => {
-        return result.logs[0].args.id.toNumber();
-    }
-
-    formatPayable = (from, value) => {
-        return {from, value: toWei(value)}
-    }
-
-    farmer = {
-        plantItem: function() {
-            const upc = 38
-            const note = 'NEW PRODUCTION BEEN MADE'
-
-            return instance.toPlantItem(
-                upc,
-                note,
-            )
-        },
-        harvestItem: async function() {
-            let result = await this.plantItem();
-            const harvestId = getId(result);
-
-            return instance.harvestItem(harvestId);
-        },
-        processItem: async function() {
-            let result = await this.harvestItem();
-            const harvestId = getId(result);
-
-            return instance.processItem(harvestId);
-        },
-        packItem: async function() {
-            let result = await this.processItem();
-            harvestId = getId(result);
-
-            return instance.packItem(harvestId);
-        },
-        putForSale: async function() {
-            let result = await this.packItem();
-            const harvestId = getId(result);
-
-            return instance.putForSaleByFarmer(harvestId, 1)
-        },
-        ship: async function() {
-            let result = await this.buyer.buyItem();
-            let sku = this.getId(result);
-
-            return instance.shipItem(sku)
-        }
-    }
-
-    distributor = {
-        me: Test.addressDistributor,
-        owner: farmer,
-        getId: (result) => {
-            return result.logs[0].args.id.toNumber();
-        },
-        buyItem: async function() {
-            result = await this.owner.putForSale();
-            let sku = this.getId(result);
-
-            return instance.buyFromFarmer(sku, formatPayable(this.me, 1));
-        },
-        receiveItem: async function() {
-            let result = await this.buyItem();
-            let sku = this.getId(result);
-
-            return instance.receiveItem(sku, {from: this.me});
-        },
-        putForSale: async function() {
-            let result = await this.receiveItem();
-            let sku = this.getId(result);
-
-            return instance.putForSaleByDistributor(sku, 1, {from: this.me})
-        },
-        ship: async function() {
-            let result = await this.buyer.buyItem();
-            let sku = this.getId(result);
-
-            return instance.shipItem(sku, {from:this.me})
-        }
-    }
-
-    retailer = {
-        me: Test.addressRetailer,
-        owner: distributor,
-        getId: (result) => {
-            return result.logs[0].args.id.toNumber();
-        },
-        buyItem: async function() {
-            result = await this.owner.putForSale();
-            let sku = this.getId(result);
-
-            return instance.buyFromDistributor(sku, formatPayable(this.me, 1));
-        },
-        receiveItem: async function() {
-            let result = await this.buyItem();
-            let sku = this.getId(result);
-
-            return instance.receiveItem(sku, {from: this.me});
-        },
-        putForSale: async function() {
-            let result = await this.receiveItem();
-            let sku = this.getId(result);
-
-            return instance.putForSaleByRetailer(sku, 1, {from: this.me})
-        },
-        ship: async function() {
-            let result = await this.buyer.buyItem();
-            let sku = this.getId(result);
-
-            return instance.shipItem(sku, {from: this.me})
-        }
-    }
-
-    consumer = {
-        owner: retailer,
-        me: Test.addressConsumer,
-        buyItem: async function() {
-            result = await this.owner.putForSale();
-            let sku = getId(result);
-
-            return instance.buyFromRetailer(sku, formatPayable(this.me, 1));
-        },
-        receiveItem: async function() {
-            let result = await this.buyItem();
-            let sku = getId(result);
-
-            return instance.receiveItem(sku, {from: this.me});
-        },
-    }
-
-    farmer.buyer = distributor;
-    distributor.buyer = retailer;
-    retailer.buyer = consumer;
 
     describe("Farm Tests", async function() {
         describe("Farm Creation - Successful", async function () {
@@ -160,7 +35,7 @@ contract('SupplyChain', function(accounts) {
 
             it("Creating new Farm", async function () {
                 const result = await instance.registerFarm(
-                    Test.addressFarmer,
+                    accounts[7],
                     Test.farmName,
                     Test.farmInfo,
                     Test.farmLat,
@@ -183,7 +58,7 @@ contract('SupplyChain', function(accounts) {
         describe("Farm Harvest - Successful", async function () {
 
             it("Plant Item", async function () {
-                const result = await farmer.plantItem()
+                const result = await helper.farmer.plantItem()
 
                 let event = result.logs[0].event;
                 assert.equal(event, 'Planted', `Unexpected event "${event}"`);
@@ -197,21 +72,21 @@ contract('SupplyChain', function(accounts) {
             })
 
             it("Harvest Item", async function () {
-                let result = await farmer.harvestItem();
+                let result = await helper.farmer.harvestItem();
 
                 let event = result.logs[0].event;
                 assert.equal(event, 'Harvested', `Unexpected event "${event}"`);
             })
 
             it("Process Item", async function () {
-                result = await farmer.processItem();
+                result = await helper.farmer.processItem();
 
                 let event = result.logs[0].event;
                 assert.equal(event, 'Processed', `Unexpected event "${event}"`);
             })
 
             it("Pack Item", async function () {
-                result = await farmer.packItem();
+                result = await helper.farmer.packItem();
 
                 let event = result.logs[0].event;
                 assert.equal(event, 'Packed', `Unexpected event "${event}"`);
@@ -220,14 +95,14 @@ contract('SupplyChain', function(accounts) {
 
         describe("Farm Selling - Successful", async function () {
             it("Put Item for sale", async function () {
-                result = await farmer.putForSale();
+                result = await helper.farmer.putForSale();
 
                 let event = result.logs[0].event;
                 assert.equal(event, 'ForSale', `Unexpected event "${event}"`);
             })
 
             it("Ship Item", async function () {
-                result = await farmer.ship();
+                result = await helper.farmer.ship();
 
                 event = result.logs[0].event;
                 assert.equal(event, 'Shipped', `Unexpected event "${event}"`);
@@ -239,14 +114,13 @@ contract('SupplyChain', function(accounts) {
     describe("Distributor Tests", async function() {
         describe("Buying", async function () {
             it("Buy Item", async function () {
-                console.log('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',distributor.me)
-                result = await distributor.buyItem();
+                result = await helper.distributor.buyItem();
                 event = result.logs[0].event;
                 assert.equal(event, 'Sold', `Unexpected event "${event}"`);
             })
 
             it("Receive Item", async function () {
-                result = await distributor.receiveItem();
+                result = await helper.distributor.receiveItem();
 
                 event = result.logs[0].event;
                 assert.equal(event, 'Received', `Unexpected event "${event}"`);
@@ -255,7 +129,7 @@ contract('SupplyChain', function(accounts) {
 
         describe("Selling", async function () {
             it("Put Item for sale", async function () {
-                result = await distributor.putForSale();
+                result = await helper.distributor.putForSale();
 
                 event = result.logs[0].event;
                 assert.equal(event, 'ForSale', `Unexpected event "${event}"`);
@@ -263,7 +137,7 @@ contract('SupplyChain', function(accounts) {
 
 
             it("Ship Item", async function () {
-                result = await distributor.ship();
+                result = await helper.distributor.ship();
 
                 event = result.logs[0].event;
                 assert.equal(event, 'Shipped', `Unexpected event "${event}"`);
@@ -274,14 +148,14 @@ contract('SupplyChain', function(accounts) {
     describe("Retailer Tests", async function() {
         describe("Buying", async function () {
             it("Buy Item", async function () {
-                result = await retailer.buyItem();
+                result = await helper.retailer.buyItem();
 
                 event = result.logs[0].event;
                 assert.equal(event, 'Sold', `Unexpected event "${event}"`);
             })
 
             it("Receive Item", async function () {
-                result = await retailer.receiveItem();
+                result = await helper.retailer.receiveItem();
 
                 event = result.logs[0].event;
                 assert.equal(event, 'Received', `Unexpected event "${event}"`);
@@ -290,7 +164,7 @@ contract('SupplyChain', function(accounts) {
 
         describe("Selling", async function () {
             it("Put Item for sale", async function () {
-                result = await retailer.putForSale();
+                result = await helper.retailer.putForSale();
 
                 event = result.logs[0].event;
                 assert.equal(event, 'ForSale', `Unexpected event "${event}"`);
@@ -298,7 +172,7 @@ contract('SupplyChain', function(accounts) {
 
 
             it("Ship Item", async function () {
-                result = await retailer.ship();
+                result = await helper.retailer.ship();
 
                 event = result.logs[0].event;
                 assert.equal(event, 'Shipped', `Unexpected event "${event}"`);
@@ -309,14 +183,14 @@ contract('SupplyChain', function(accounts) {
     describe("Consumer Tests", async function() {
         describe("Buying", async function () {
             it("Buy Item", async function () {
-                result = await consumer.buyItem();
+                result = await helper.consumer.buyItem();
 
                 event = result.logs[0].event;
                 assert.equal(event, 'Sold', `Unexpected event "${event}"`);
             })
 
             it("Receive Item", async function () {
-                result = await consumer.receiveItem();
+                result = await helper.consumer.receiveItem();
 
                 event = result.logs[0].event;
                 assert.equal(event, 'Received', `Unexpected event "${event}"`);
