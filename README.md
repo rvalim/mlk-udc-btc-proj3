@@ -23,24 +23,24 @@ The proposal of this document is to guide you over this project.
 ├── ...
 ├── project-6
 | ├── contracts
-| | |── access-control # The RBAC is implemented here
-| | |── coffeebase # Where the contract code for our SupplyChain is located
+| | |── access-control            # The RBAC is implemented here
+| | |── coffeebase                # Where the contract code for our SupplyChain is located
 | | └── ...
 | ├── ...
 | ├── src
 | | |── js
-| | | |── app.js # Where the front-end calls the Contract methods
+| | | |── app.js                  # Where the front-end calls the Contract methods
 | | | └── truffle-contract.js
 | |── test
-| | └── TestSupplychain.js # Where the truffle tests are implemented
-| |── bs-config.json # Configuration for Lite-Server
-| |── index.html # The main page, where the front-end is located
+| | └── TestSupplychain.js        # Where the truffle tests are implemented
+| |── bs-config.json              # Configuration for Lite-Server
+| |── index.html                  # The main page, where the front-end is located
 | |── ...
-| |── truffle-config.js # Configuration for truffle commands, the address of ganache server goes here
+| |── truffle-config.js           # Configuration for truffle commands, the address of ganache server goes here
 | |── ...
 |── ...
-|── 0_ganache-cli.txt # Address created when running commented bellow
-|── 1_start_ganache-cli.sh # Command to start Ganache with a predefined Wallet
+|── 0_ganache-cli.txt             # Address created when running commented bellow
+|── 1_start_ganache-cli.sh        # Command to start Ganache with a predefined Wallet
 └── ...
 ```
 
