@@ -15,6 +15,13 @@ The proposal of this document is to guide you over this project.
 *  [Solidity](https://solidity.readthedocs.io): >=0.4.24 - Ethereum language for writing Smart Contracts
 *  [Node](https://nodejs.org): v12.6.0 - JavaScript runtime
 *  [Web3.js](https://web3js.readthedocs.io): v1.0.0-beta.37 - A collection of libraries which allow you to interact with a local or remote Ethereum node, using an HTTP, WebSocket or IPC connection
+*  [truffle-hdwallet-provider](https://www.npmjs.com/package/truffle-hdwallet-provider): v1.0.14 - Use it to sign transactions for addresses derived from a 12 or 24 word mnemonic.
+
+### Deploy on Rinkeby
+
+Transaction hash: 0x605d4ca01f435abefe65cb4e8dce95907412921c5ecc73f7252162bac7f33836
+Contract Address: 0x11f90e425Bd1FD1E9aDB5B0E54DdD1d89622eD1E
+Rinkeby Link: https://rinkeby.etherscan.io/address/0xfb0720c0715e68f80c0c0437c9c491abfed9e7ab#code
 
 ### Folder Structure
 
