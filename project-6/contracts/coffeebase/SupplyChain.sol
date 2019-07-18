@@ -221,7 +221,7 @@ contract SupplyChain is Ownable, FarmerRole, DistributorRole, RetailerRole, Cons
   {
     itemBags[_sku].state = SellState.Sold;
     itemBags[_sku].buyerId = msg.sender;
-    itemBags[_sku].ownerID.transfer(msg.value);
+    itemBags[_sku].ownerID.transfer(itemBags[_sku].productPrice);
 
     emit Sold(_sku);
   }
@@ -247,7 +247,7 @@ contract SupplyChain is Ownable, FarmerRole, DistributorRole, RetailerRole, Cons
 
   // Define a modifer that verifies the Caller
   modifier verifyCaller(address _address) {
-    require(msg.sender == _address, "Are you joking?");
+    require(msg.sender == _address, "You have no permition to this action!");
     _;
   }
 

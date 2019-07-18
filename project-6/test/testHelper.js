@@ -72,7 +72,7 @@ const helper = {
             return helper.instance.buyFromFarmer(sku, helper.formatPayable(this.me, 1));
         },
         receiveItem: async function () {
-            let result = await this.buyItem();
+            let result = await this.owner.ship();
             let sku = helper.getId(result);
 
             return helper.instance.receiveItem(sku, { from: this.me });
@@ -100,7 +100,7 @@ const helper = {
             return helper.instance.buyFromDistributor(sku, helper.formatPayable(this.me, 1));
         },
         receiveItem: async function () {
-            let result = await this.buyItem();
+            let result = await this.owner.ship();
             let sku = helper.getId(result);
 
             return helper.instance.receiveItem(sku, { from: this.me });
@@ -128,7 +128,7 @@ const helper = {
             return helper.instance.buyFromRetailer(sku, helper.formatPayable(this.me, 1));
         },
         receiveItem: async function () {
-            let result = await this.buyItem();
+            let result = await this.owner.ship();
             let sku = helper.getId(result);
 
             return helper.instance.receiveItem(sku, { from: this.me });

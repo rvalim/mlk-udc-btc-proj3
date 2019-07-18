@@ -3,13 +3,13 @@
 var SupplyChain = artifacts.require('SupplyChain');
 
 
-contract('SupplyChain', function(accounts) {
+contract('SupplyChain', function (accounts) {
     const Test = require("./testValues")(accounts, web3);
     const helper = require("./testHelper");
     let instance;
 
-    beforeEach(async ()=> {
-        instance = await SupplyChain.new({from: Test.addressContractOwner});
+    beforeEach(async () => {
+        instance = await SupplyChain.new({ from: Test.addressContractOwner });
 
         helper.instance = instance;
         helper.farmer.me = Test.addressFarmer;
@@ -28,8 +28,8 @@ contract('SupplyChain', function(accounts) {
     });
 
 
-    describe("Farm Tests", async function() {
-        describe("Farm Creation - Successful", async function () {
+    describe("Farm Tests", async function () {
+        describe("Creation - Successful", async function () {
             const harvestId = 0
             const skuId = 0
 
@@ -55,7 +55,7 @@ contract('SupplyChain', function(accounts) {
 
         })
 
-        describe("Farm Harvest - Successful", async function () {
+        describe("Harvest - Successful", async function () {
 
             it("Plant Item", async function () {
                 const result = await helper.farmer.plantItem()
@@ -91,9 +91,10 @@ contract('SupplyChain', function(accounts) {
                 let event = result.logs[0].event;
                 assert.equal(event, 'Packed', `Unexpected event "${event}"`);
             })
+
         })
 
-        describe("Farm Selling - Successful", async function () {
+        describe("Selling - Successful", async function () {
             it("Put Item for sale", async function () {
                 result = await helper.farmer.putForSale();
 
@@ -109,10 +110,78 @@ contract('SupplyChain', function(accounts) {
             })
         })
 
+        describe("Failure tests", async function () {
+            const secondFarmer = accounts[7];
+
+            beforeEach(async () => {
+                await instance.registerFarm(secondFarmer,
+                    'test',
+                    'second farm',
+                    '1',
+                    '2');
+            });
+
+            it("Harvest not mine plantation", async function () {
+                const result = await helper.farmer.plantItem();
+                let harvestId = result.logs[0].args.id.toNumber();
+
+                try {
+                    await instance.harvestItem(
+                        harvestId,
+                        { from: secondFarmer });
+                    assert.fail('An exception was expected')
+
+                } catch (error) {
+                }
+            })
+
+            it("Process not mine harvests", async function () {
+                const result = await helper.farmer.harvestItem();
+                let harvestId = result.logs[0].args.id.toNumber();
+
+                try {
+                    await instance.processItem(
+                        harvestId,
+                        { from: secondFarmer });
+                    assert.fail('An exception was expected')
+
+                } catch (error) {
+                }
+            })
+
+            it("Packing not what I processed", async function () {
+                const result = await helper.farmer.processItem();
+                let harvestId = result.logs[0].args.id.toNumber();
+
+                try {
+                    await instance.packItem(
+                        harvestId,
+                        { from: secondFarmer });
+                    assert.fail('An exception was expected')
+
+                } catch (error) {
+                }
+            })
+
+            it("Shipping not what I packed", async function () {
+                const result = await helper.distributor.buyItem();
+                let harvestId = result.logs[0].args.id.toNumber();
+
+                try {
+                    await instance.ship(
+                        harvestId,
+                        { from: secondFarmer });
+                    assert.fail('An exception was expected')
+
+                } catch (error) {
+                }
+            })
+        })
+
     })
 
-    describe("Distributor Tests", async function() {
-        describe("Buying", async function () {
+    describe("Distributor Tests", async function () {
+        describe("Buying - Successful", async function () {
             it("Buy Item", async function () {
                 result = await helper.distributor.buyItem();
                 event = result.logs[0].event;
@@ -127,7 +196,7 @@ contract('SupplyChain', function(accounts) {
             })
         })
 
-        describe("Selling", async function () {
+        describe("Selling - Successful", async function () {
             it("Put Item for sale", async function () {
                 result = await helper.distributor.putForSale();
 
@@ -143,9 +212,93 @@ contract('SupplyChain', function(accounts) {
                 assert.equal(event, 'Shipped', `Unexpected event "${event}"`);
             })
         })
+
+
+        describe("Failure Tests", async function () {
+            const secondDistributor = accounts[7];
+
+            beforeEach(async () => {
+                await instance.addDistributor(secondDistributor);
+            });
+
+            it("Buy item for sale by the retailer", async function () {
+                result = await helper.retailer.putForSale();
+                let id = result.logs[0].args.id.toNumber();
+
+                try {
+                    await instance.buyFromFarmer(
+                        id,
+                        { value: 1 });
+
+                    assert.fail('An exception was expected')
+
+                } catch (error) {
+                }
+            })
+
+            it("Buy item for sale by another distributor", async function () {result = await helper.retailer.putForSale();
+                result = await helper.distributor.putForSale();
+                let id = result.logs[0].args.id.toNumber();
+
+                try {
+                    await instance.buyFromFarmer(
+                        id,
+                        { value: 1 });
+
+                    assert.fail('An exception was expected')
+
+                } catch (error) {
+                }
+            })
+
+            it("Ship item that is not mine", async function () {
+                result = await helper.retailer.buyItem();
+                let id = result.logs[0].args.id.toNumber();
+
+                try {
+                    await instance.ship(
+                        id,
+                        { from: secondDistributor });
+
+                    assert.fail('An exception was expected')
+
+                } catch (error) {
+                }
+            })
+
+            it("Receive item that is not mine", async function () {
+                result = await helper.farmer.ship();
+                let id = result.logs[0].args.id.toNumber();
+
+                try {
+                    await instance.receiveItem(
+                        id,
+                        { from: secondDistributor });
+
+                    assert.fail('An exception was expected')
+
+                } catch (error) {
+                }
+            })
+
+            it("Put for sale item that is not mine", async function () {
+                result = await helper.distributor.receiveItem();
+                let id = result.logs[0].args.id.toNumber();
+
+                try {
+                    await instance.putForSale(
+                        id,
+                        { from: secondDistributor });
+
+                    assert.fail('An exception was expected')
+
+                } catch (error) {
+                }
+            })
+        })
     })
 
-    describe("Retailer Tests", async function() {
+    describe("Retailer Tests", async function () {
         describe("Buying", async function () {
             it("Buy Item", async function () {
                 result = await helper.retailer.buyItem();
@@ -178,9 +331,92 @@ contract('SupplyChain', function(accounts) {
                 assert.equal(event, 'Shipped', `Unexpected event "${event}"`);
             })
         })
+
+        describe("Failure Tests", async function () {
+            const secondRetailer = accounts[7];
+
+            beforeEach(async () => {
+                await instance.addRetailer(secondRetailer);
+            });
+
+            it("Buy item for sale by the farmer", async function () {
+                result = await helper.farmer.putForSale();
+                let id = result.logs[0].args.id.toNumber();
+
+                try {
+                    await instance.buyFromDistributor(
+                        id,
+                        { value: 1 });
+
+                    assert.fail('An exception was expected')
+
+                } catch (error) {
+                }
+            })
+
+            it("Buy item for sale by another retailer", async function () {result = await helper.retailer.putForSale();
+                result = await helper.retailer.putForSale();
+                let id = result.logs[0].args.id.toNumber();
+
+                try {
+                    await instance.buyFromDistributor(
+                        id,
+                        { value: 1 });
+
+                    assert.fail('An exception was expected')
+
+                } catch (error) {
+                }
+            })
+
+            it("Ship item that is not mine", async function () {
+                result = await helper.consumer.buyItem();
+                let id = result.logs[0].args.id.toNumber();
+
+                try {
+                    await instance.ship(
+                        id,
+                        { from: secondRetailer });
+
+                    assert.fail('An exception was expected')
+
+                } catch (error) {
+                }
+            })
+
+            it("Receive item that is not mine", async function () {
+                result = await helper.farmer.ship();
+                let id = result.logs[0].args.id.toNumber();
+
+                try {
+                    await instance.receiveItem(
+                        id,
+                        { from: secondRetailer });
+
+                    assert.fail('An exception was expected')
+
+                } catch (error) {
+                }
+            })
+
+            it("Put for sale item that is not mine", async function () {
+                result = await helper.retailer.receiveItem();
+                let id = result.logs[0].args.id.toNumber();
+
+                try {
+                    await instance.putForSale(
+                        id,
+                        { from: secondRetailer });
+
+                    assert.fail('An exception was expected')
+
+                } catch (error) {
+                }
+            })
+        })
     })
 
-    describe("Consumer Tests", async function() {
+    describe("Consumer Tests", async function () {
         describe("Buying", async function () {
             it("Buy Item", async function () {
                 result = await helper.consumer.buyItem();
@@ -197,6 +433,59 @@ contract('SupplyChain', function(accounts) {
             })
         })
 
+
+        describe("Failure Tests", async function () {
+            const secondConsumer = accounts[7];
+
+            beforeEach(async () => {
+                await instance.addConsumer(secondConsumer);
+            });
+
+            it("Buy item for sale by the farmer", async function () {
+                result = await helper.farmer.putForSale();
+                let id = result.logs[0].args.id.toNumber();
+
+                try {
+                    await instance.buyFromFarmer(
+                        id,
+                        { value: 1 });
+
+                    assert.fail('An exception was expected')
+
+                } catch (error) {
+                }
+            })
+
+            it("Buy item for sale by distributor", async function () {result = await helper.retailer.putForSale();
+                result = await helper.distributor.putForSale();
+                let id = result.logs[0].args.id.toNumber();
+
+                try {
+                    await instance.buyFromDistributor(
+                        id,
+                        { value: 1 });
+
+                    assert.fail('An exception was expected')
+
+                } catch (error) {
+                }
+            })
+
+            it("Receive item that is not mine", async function () {
+                result = await helper.retailer.ship();
+                let id = result.logs[0].args.id.toNumber();
+
+                try {
+                    await instance.receiveItem(
+                        id,
+                        { from: secondConsumer });
+
+                    assert.fail('An exception was expected')
+
+                } catch (error) {
+                }
+            })
+        })
     })
 })
 
